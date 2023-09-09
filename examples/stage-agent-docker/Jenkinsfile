@@ -1,0 +1,21 @@
+pipeline {
+  agent none
+  stages {
+    stage('Java Dev') {
+      agent {
+        docker { image 'adoptopenjdk/maven-openjdk11' }
+      }
+      steps {
+        sh 'mvn --version'
+      }
+    }
+    stage('NodeApp Dev') {
+      agent {
+        docker { image 'node:16-alpine' }
+      }
+      steps {
+        sh 'node --version'
+      }
+    }
+  }
+}
