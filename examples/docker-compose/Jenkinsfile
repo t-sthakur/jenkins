@@ -18,13 +18,13 @@ pipeline {
     }
     stage('Docker compose up') {
       steps {
-        sh 'docker compose up -d --no-color --wait'
+        sh 'docker compose up -d --no-color --wait -f examples/docker-compose/docker-compose.yaml'
         sh 'docker compose ps'
       }
     }
     stage('Test the container app') {
       steps {
-        sh 'curl http://localhost:3000/param?query=demo | jq'
+        sh 'curl http://localhost:8080'
       }
     }
   }
