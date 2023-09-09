@@ -1,0 +1,8 @@
+version: '3'
+services:
+  echo-server:
+    image: brainupgrade/hello:latest
+    environment:
+      - ENVIRONMENT=e2e
+    ports:
+      - 8080:80
