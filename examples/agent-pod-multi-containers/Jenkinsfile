@@ -1,0 +1,49 @@
+pipeline {
+  agent {
+    kubernetes {
+      label 'jenkins-slave'
+      defaultContainer 'jnlp'
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: dind
+    image: brainupgrade/docker:20-dind
+    env:
+    - name: DOCKER_TLS_CERTDIR
+      value: ''
+    securityContext:
+      privileged: true
+  - name: docker
+    env:
+    - name: DOCKER_HOST
+      value: 127.0.0.1
+    image: docker
+    command:
+    - cat
+    tty: true
+    startupProbe:
+      tcpSocket:
+        port: 2375
+      periodSeconds: 10
+      successThreshold: 1
+      failureThreshold: 10
+"""
+    }
+  }
+  stages {
+
+    stage('Build') {
+      steps {
+        container('docker') {
+          withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+            sh "git pull https://github.com/brainupgrade-in/gitops-apps-hello"
+            sh "docker login -u ${USERNAME} -p ${PASSWORD}"
+            sh "docker build --build-arg='BUILD_ID=${env.BUILD_ID}' --build-arg='GIT_COMMIT_ID=${env.GIT_COMMIT}' -t brainupgrade/hello:${env.GIT_COMMIT} ."
+          }
+        }
+      }
+    }  
+  }
+}
