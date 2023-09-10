@@ -1,0 +1,20 @@
+podTemplate(   
+  containers: [
+      containerTemplate(name: 'maven', image: 'adoptopenjdk/maven-openjdk11', command: 'sleep', args: '99d'),
+  ], 
+  volumes: [
+      persistentVolumeClaim(mountPath: '/root/.m2/repository', claimName: 'maven-repo', readOnly: false)
+  ])  
+  
+  {
+    node(POD_LABEL) {
+        stage('Request Logger') {
+            git url: 'https://github.com/brainupgrade-in/request-logger', branch: 'main'
+            container('maven') {
+                stage('Build Request Logger') {
+                    sh 'mvn -B -ntp clean install'
+                }
+            }
+        }
+    }
+  }

@@ -1,0 +1,15 @@
+pipeline {
+    
+    agent {
+      kubernetes {
+        inheritFrom 'docker' //pod template in Kubernetes cloud having this label
+      }
+    }    
+    stages {
+        stage('Main') {
+            steps {
+                sh 'hostname'
+            }
+        }
+    }
+}

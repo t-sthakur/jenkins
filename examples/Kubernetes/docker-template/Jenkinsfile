@@ -1,0 +1,25 @@
+pipeline {
+  agent {
+    kubernetes {
+      label 'jenkins-slave'
+      defaultContainer 'jnlp'
+      inheritFrom 'docker'
+    }
+  }
+  stages {
+    stage('Build') {
+       
+      steps {
+        git url: 'https://github.com/brainupgrade-in/gitops-apps-hello', branch: 'main'
+        
+        container('dind') {
+          withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+            sh 'git config --global --add safe.directory "*" && export GIT_COMMIT=$(git rev-parse HEAD)'
+            sh "docker login -u ${USERNAME} -p ${PASSWORD}"
+            sh "docker build --build-arg='BUILD_ID=${env.BUILD_ID}' --build-arg='GIT_COMMIT_ID=${GIT_COMMIT}' -t brainupgrade/hello:${GIT_COMMIT} ."
+          }
+        }
+      }
+    }  
+  }
+}

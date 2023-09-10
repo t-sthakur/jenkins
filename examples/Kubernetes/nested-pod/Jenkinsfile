@@ -1,0 +1,14 @@
+podTemplate(inheritFrom: 'docker', containers: [containerTemplate(image: 'docker', name: 'docker', command: 'cat', ttyEnabled: true)]) {
+    podTemplate(containers: [containerTemplate(image: 'maven', name: 'maven', command: 'cat', ttyEnabled: true)]) {
+      node(POD_LABEL) { // gets a pod with both docker and maven
+
+        container('docker'){
+          sh 'docker info'
+        }
+        container('maven'){
+          sh 'mvn version'
+          sh 'echo hello $POD_CONTAINER_NAME'
+        }
+      }
+    }
+}
