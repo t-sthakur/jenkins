@@ -1,0 +1,52 @@
+pipeline{
+    agent {
+    kubernetes {
+      label 'jenkins-slave'
+      defaultContainer 'jnlp'
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: maven
+    image: maven:3.8.3-openjdk-17
+    command:
+    - cat
+    tty: true
+"""
+    }
+  }
+    
+  options {
+    disableConcurrentBuilds()
+  }
+
+  
+  stages{
+    stage('Clone'){
+      steps{
+        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/spring-guides/gs-testing-web.git']])
+        echo "clone demo"
+      }
+    }
+
+    stage('Build & Test'){
+      steps{
+        script{
+          container('maven'){
+            sh 'mvn test -DSERVER_PORT=1234 -f complete/pom.xml'
+          }
+        }
+      }
+    }
+
+  }
+  
+  post{
+    always{
+          container('maven'){
+           junit 'target/surefire-reports/**/*.xml'
+          }
+    }
+  }
+}
