@@ -13,7 +13,7 @@ podTemplate(containers: [
             steps{
                 script{
                     container('jmeter'){
-                        sh 'rm -rf result && rm -rf result.jtl && jmeter -n -t src/test/resources/baidu-jmeter.jmx -l result.jtl -e -o result'
+                        sh 'rm -rf result && rm -rf result.jtl && jmeter -n -t src/test/resources/jmeter-e2e.jmx -l result.jtl -e -o result'
                     }
                 }
             }
