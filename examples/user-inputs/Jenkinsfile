@@ -1,0 +1,18 @@
+pipeline {
+    agent any
+    stages {
+        stage('Example') {
+            input {
+                message "Release to UAT?"
+                ok "Yes, INT tested and results are good"
+                parameters {
+                    string(name: 'feature', defaultValue: 'base', description: 'Which feature is being released?')
+                    string(name: 'tag', defaultValue: '1.0.0', description: 'What should be the release tag?')
+                }
+            }
+            steps {
+                echo "Hello, this build is tagged as ${tag}-${feature}-${env.BUILD_NUMBER}"
+            }
+        }
+    }
+}

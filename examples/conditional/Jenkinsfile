@@ -1,0 +1,29 @@
+pipeline {
+  agent any
+  stages {
+    stage('for main branch') {
+      when {
+        branch 'main'
+      }
+      steps {
+        echo 'main branch'
+      }
+    }
+    stage('for feature branch') {
+      when {
+        branch 'feature'
+      }
+      steps {
+        echo 'feature branch'
+      }
+    }
+    stage('for pull request') {
+      when {
+        changeRequest()
+      }
+      steps {
+        echo 'pull request'
+      }
+    }
+  }
+}
