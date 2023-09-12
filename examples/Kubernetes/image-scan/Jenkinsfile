@@ -1,0 +1,41 @@
+pipeline{
+    agent {
+    kubernetes {
+      defaultContainer 'trivy'
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: trivy
+    image: aquasec/trivy
+    command:
+    - cat
+    tty: true
+"""
+    }
+  }
+    
+    stages{
+
+        stage('Image Scan'){
+            steps{
+                script{
+                    container('trivy'){
+                        sh "trivy image --severity HIGH,CRITICAL --output image-cve.html brainupgrade/hello:1.0.0"
+                    }
+                }
+            }
+        }
+        
+        stage('Image Scan Report'){
+            steps{
+                script{
+                    container('trivy'){
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '.', reportFiles: 'image-cve.html', reportName: 'ImageScan-CVE-Trivy-Report', reportTitles: ''])
+                    }
+                }
+            }
+        }
+    }
+}
