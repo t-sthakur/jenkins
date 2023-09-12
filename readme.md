@@ -7,6 +7,22 @@ kubectl apply -f https://raw.githubusercontent.com/brainupgrade-in/jenkins/main/
 # To run Junit tests
 Add pipeline project https://github.com/jenkinsci/performance-plugin 
 
+# Sonar Qube
+withSonaryQubeEnv('sonar'){
+    sh ''' 
+    $SCANNER_HOME/bin/sonar-scanner \ 
+     -Dsonar.projectName=${env.PROJECT_NAME} \ 
+     -Dsonar.java.binaries=. \ 
+      -Dsonar.projectKey=${env.PROJECT_NAME}
+    '''
+}
+
+Update Jenkins settins and tools accordingly
+
+# OWASP
+dependencyCheck additionalArguments: '', odcInstallation: 'owasp-dc' dependencyCheckPublisher patter: '**/dependency-check-report.xml'
+
+Specify in Jenkins tools: owasp-dc and use dependency-check as installation options
 
 # References
 https://github.com/fabric8io/fabric8-jenkinsfile-library/
