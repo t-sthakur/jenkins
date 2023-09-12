@@ -8,12 +8,12 @@ kubectl apply -f https://raw.githubusercontent.com/brainupgrade-in/jenkins/main/
 Add pipeline project https://github.com/jenkinsci/performance-plugin 
 
 # Sonar Qube
-withSonaryQubeEnv('sonar'){
+withSonaryQubeEnv('sonarqube'){
     sh ''' 
     $SCANNER_HOME/bin/sonar-scanner \ 
-     -Dsonar.projectName=${env.PROJECT_NAME} \ 
+     -Dsonar.projectName=${env.JOB_NAME} \ 
      -Dsonar.java.binaries=. \ 
-      -Dsonar.projectKey=${env.PROJECT_NAME}
+      -Dsonar.projectKey=${env.JOB_NAME}
     '''
 }
 

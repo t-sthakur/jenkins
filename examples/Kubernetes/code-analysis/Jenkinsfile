@@ -1,0 +1,104 @@
+pipeline{
+    agent {
+    kubernetes {
+      defaultContainer 'jnlp'
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  volumes:
+  - name: mvnrepo
+    persistentVolumeClaim:
+      claimName: maven-repo
+  containers:
+  - name: maven
+    image: maven:3.8.3-openjdk-17
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: mvnrepo
+      mountPath: "/root/.m2/repository"
+"""
+    }
+  }
+    
+  options {
+    disableConcurrentBuilds()
+  }
+
+    environment {
+        SCANNER_HOME=tool 'sonarqube'
+    }
+    
+    stages{
+        
+        stage("Git Checkout"){
+            steps{
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/brainupgrade-in/spring-framework-petclinic.git'
+            }
+        }
+        
+        stage("Compile"){
+            steps{
+              script{
+                container('maven'){
+                  sh "mvn clean compile"
+                }
+              }
+            }
+        }
+        
+         stage("Test Cases"){
+            steps{
+              script{
+                container('maven'){
+                  sh "mvn test"
+                }
+              }
+            }
+        }
+        
+        stage("Sonarqube Analysis "){
+            steps{
+                withSonarQubeEnv('sonarqube') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Petclinic \
+                    -Dsonar.java.binaries=. \
+                    -Dsonar.projectKey=Petclinic '''
+    
+                }
+            }
+        }
+        
+        stage("OWASP Dependency Check"){
+            steps{
+                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'owasp-dc'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        
+        //  stage("Build"){
+        //     steps{
+        //         sh " mvn clean install"
+        //     }
+        // }
+        
+        // stage("Docker Build & Push"){
+        //     steps{
+        //         script{
+        //            withDockerRegistry(credentialsId: 'docker-hub-credentials', toolName: 'docker') {
+                        
+        //                 sh "docker build -t brainupgrade/${env.BUILD_JOB}:${env.BUILD_ID} ."
+        //                 sh "docker tag image1 adijaiswal/pet-clinic123:latest "
+        //                 sh "docker push adijaiswal/pet-clinic123:latest "
+        //             }
+        //         }
+        //     }
+        // }        
+        // stage("TRIVY"){
+        //     steps{
+        //         sh " trivy image adijaiswal/pet-clinic123:latest"
+        //     }
+        // }
+    }
+}
