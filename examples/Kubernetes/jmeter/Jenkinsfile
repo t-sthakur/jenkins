@@ -22,6 +22,7 @@ spec:
                 script{
                     container('jmeter'){
                         sh "rm -rf result && rm -rf result.jtl && jmeter -n -t ${env.WORKSPACE}/src/test/resources/jmeter-e2e.jmx -l result.jtl -e -o result"
+                        perfReport filterRegex: '', sourceDataFiles: '${env.WORKSPACE}/**/*.jtl'
                     }
                 }
             }
