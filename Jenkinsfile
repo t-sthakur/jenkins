@@ -1,7 +1,6 @@
 pipeline{
     agent {
     kubernetes {
-      label 'jenkins-slave'
       defaultContainer 'jnlp'
       yaml """
 apiVersion: v1
@@ -32,7 +31,7 @@ spec:
             steps{
                 script{
                     container('jmeter'){
-                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'result', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'result', reportFiles: 'result.jtl', reportName: 'JMeter Report', reportTitles: ''])
                     }
                 }
             }
