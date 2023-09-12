@@ -22,7 +22,7 @@ spec:
             steps{
                 script{
                     container('trivy'){
-                        sh "trivy image --severity HIGH,CRITICAL --template @examples/Kubernetes/image-scan/html.tpl --output image-cve.html brainupgrade/hello:1.0"
+                        sh "trivy image --severity HIGH,CRITICAL --template '@examples/Kubernetes/image-scan/html.tpl' --output image-cve.html brainupgrade/hello:1.0"
                     }
                 }
             }
