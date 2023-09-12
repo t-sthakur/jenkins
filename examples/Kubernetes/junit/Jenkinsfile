@@ -7,12 +7,19 @@ pipeline{
 apiVersion: v1
 kind: Pod
 spec:
+  volumes:
+  - name: mvnrepo
+    persistentVolumeClaim:
+      claimName: maven-repo
   containers:
   - name: maven
     image: maven:3.8.3-openjdk-17
     command:
     - cat
     tty: true
+    volumeMounts:
+    - name: mvnrepo
+      mounthPath: /root/.m2/repository
 """
     }
   }
