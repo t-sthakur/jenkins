@@ -88,16 +88,15 @@ spec:
         //         script{
         //            withDockerRegistry(credentialsId: 'docker-hub-credentials', toolName: 'docker') {
                         
-        //                 sh "docker build -t brainupgrade/${env.BUILD_JOB}:${env.BUILD_ID} ."
-        //                 sh "docker tag image1 adijaiswal/pet-clinic123:latest "
-        //                 sh "docker push adijaiswal/pet-clinic123:latest "
+        //                 sh "docker build -t brainupgrade/spring-framework-petclinic:${env.BUILD_ID} ."
+        //                 sh "docker push brainupgrade/spring-framework-petclinic:${env.BUILD_ID} "
         //             }
         //         }
         //     }
         // }        
         // stage("TRIVY"){
         //     steps{
-        //         sh " trivy image adijaiswal/pet-clinic123:latest"
+        //         sh " trivy image brainupgrade/spring-framework-petclinic:${env.BUILD_ID}"
         //     }
         // }
     }
