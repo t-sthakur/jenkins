@@ -1,0 +1,38 @@
+pipeline {
+	agent {
+        label 'jenkins-k8s-agent'
+    }
+
+	triggers {
+		pollSCM 'H/10 * * * *'
+	}
+
+	options {
+		disableConcurrentBuilds()
+		buildDiscarder(logRotator(numToKeepStr: '14'))
+	}
+    stages{
+        stage('Build'){
+            steps{
+                sh "echo building the app"
+            }
+        }
+        stage('Test'){
+            steps{
+                error 'Test failed'
+            }
+        }
+    }
+
+	post {
+		always {
+			script {
+				emailext(
+						subject: "Jenkins build status: [${currentBuild.fullDisplayName}] ${currentBuild.currentResult}",
+                        attachLog: true, compressLog: true, recipientProviders: [contributor(), culprits(), buildUser(), requestor()],
+						mimeType: 'text/html',to: 'rajeshgheware@gmail.com',
+						body: "<a href=\"${env.BUILD_URL}\">${currentBuild.fullDisplayName} is reported as ${currentBuild.currentResult}</a>")
+			}
+		}
+	}
+}
