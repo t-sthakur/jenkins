@@ -2,7 +2,7 @@ pipeline {
   // agent { dockerfile true }
   agent {
     dockerfile {
-      dir 'examples/02-docker/dockerfile'
+      dir 'examples/02-docker/06-dockerfile'
       filename 'Dockerfile'
       label 'docker'
     }
