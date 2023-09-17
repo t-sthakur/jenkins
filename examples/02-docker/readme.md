@@ -7,6 +7,5 @@ kubectl apply -f https://raw.githubusercontent.com/brainupgrade-in/dockerk8s/mai
 Add Agent named docker and launch method - Launch agent via SSH
 
 # Add docker plugin (to use as pipeline step)
-Plugin - https://plugins.jenkins.io/docker-plugin/
-Add Docker node using Jenkins Cloud option
-Specify docker host and agent label (docker-agent)
+Add Docker node using Jenkins Add Node option
+Specify docker host and agent label (docker)
