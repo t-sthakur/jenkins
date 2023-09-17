@@ -1,0 +1,14 @@
+pipeline {
+    agent {
+        label 'docker'
+    }
+
+    stages {
+        stage('Build Nodejs app ') {
+            steps {
+                git branch: 'master', url: 'https://github.com/brainupgrade-in/nodejsappdocker'
+                sh "docker build -t brainupgrade/nodejsappdocker:${env.BUILD_ID} ."
+            }
+        }
+    }
+}

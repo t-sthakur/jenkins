@@ -1,0 +1,20 @@
+pipeline {
+    agent {
+      label 'docker'
+    }
+    stages {
+        stage('Build & Deliver') {
+            steps {
+              script{
+                docker.withServer('tcp://docker:2375') {
+                    docker.image('maven:3.3.3-jdk-8').inside {
+                      git branch: 'master', url: 'https://github.com/jglick/simple-maven-project-with-tests'
+                      sh 'mvn -B -Dmaven.test.failure.ignore install'
+                      junit '**/target/surefire-reports/TEST-*.xml'
+                    }
+                }
+              }
+            }
+        }
+    }
+}

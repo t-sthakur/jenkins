@@ -1,9 +1,0 @@
-node {
-
-    docker.withServer('tcp://mtvlabcicdu1.mtvlabcicd.svc:2375') {
-        docker.image('mysql:8-oracle').withRun('-p 3306:3306') {
-            /* do things */
-            sh 'echo hello'
-        }
-    }
-}

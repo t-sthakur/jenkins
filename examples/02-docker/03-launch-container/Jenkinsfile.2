@@ -1,0 +1,21 @@
+pipeline {
+    agent {
+      label 'docker'
+    }
+    stages {
+        stage('Build & Deliver') {
+            steps {
+              git branch: 'master', url: 'https://github.com/brainupgrade-in/nodejsappdocker'
+              script{
+                docker.withServer('tcp://docker:2375') {
+                    docker.image('mysql:8-oracle').withRun('-p 3306:3306') {
+                        /* do things */
+                        sh 'echo hello'
+                        sh 'ps aux'
+                    }
+                }
+              }
+            }
+        }
+    }
+}
