@@ -25,9 +25,11 @@ pipeline {
     }
     stage('Test the container app') {
       steps {
-        
-         docker.image('brainupgrade/tshoot').inside {
-                      sh 'curl http://echo-server:8080'
+          script{
+            docker.image('brainupgrade/tshoot').inside {
+                          sh 'curl http://echo-server:8080'
+
+            }
         }
       }
     }
