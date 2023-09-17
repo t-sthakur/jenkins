@@ -9,7 +9,6 @@ pipeline {
           docker version
           docker info
           docker compose version 
-          curl --version
         '''
       }
     }
@@ -26,7 +25,10 @@ pipeline {
     }
     stage('Test the container app') {
       steps {
-        sh 'curl http://localhost:8080'
+        
+         docker.image('brainupgrade/tshoot').inside {
+                      sh 'curl http://echo-server:8080'
+        }
       }
     }
   }
