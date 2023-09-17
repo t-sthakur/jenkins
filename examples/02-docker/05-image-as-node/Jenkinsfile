@@ -3,15 +3,10 @@ pipeline {
   docker {
     image 'node:20-alpine3.17'
     label 'docker'
-    registryCredentialsId 'docker-hub-credentials'
     reuseNode true
   }
 }
 
-  environment{
-      DOCKER_HOST="tcp://docker:2375"
-      DOCKER_OPTS="-H tcp://docker:2375 -H unix:///var/run/docker.sock"
-  }
   stages {
     stage('Verify') {
       steps {
