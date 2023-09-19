@@ -38,7 +38,9 @@ pipeline {
     always {
       sh 'docker compose  -f examples/02-docker/07-docker-compose/docker-compose.yaml down'
       sh 'docker compose  -f examples/02-docker/07-docker-compose/docker-compose.yaml kill'
-      sh 'docker compose ls'
+      sh "docker stop $(docker ps -q)"
+      sh "docker stop $(docker ps -q -a)"
+      sh 'docker network prune -f '
     }
   }
 }
