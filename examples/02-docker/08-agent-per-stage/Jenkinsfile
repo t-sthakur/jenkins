@@ -11,7 +11,7 @@ pipeline {
     }
     stage('NodeApp Dev') {
       agent {
-        docker { image 'node:16-alpine' }
+        docker { image 'node:20-alpine3.17' }
       }
       steps {
         sh 'node --version'

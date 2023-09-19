@@ -6,7 +6,7 @@ pipeline {
         stage('Build & Deliver') {
             steps {
               script{
-                    docker.image('mysql:8-oracle').withRun('-p 3306:3306') {
+                    withDockerContainer(args: '-p 3306:3306', image: 'mysql:8-oracle') {
                         /* do things */
                         sh 'echo hello'
                         sh 'ps aux'

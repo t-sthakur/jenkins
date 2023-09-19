@@ -1,0 +1,93 @@
+pipeline {
+
+  agent {
+    node {
+      label 'docker'
+    }
+  }
+
+  options {
+    parallelsAlwaysFailFast()
+    buildDiscarder(logRotator(numToKeepStr:'10'))
+  }
+    parameters {
+        string(name: 'IMAGE_AUTHOR', defaultValue: 'brainupgrade', description: 'Your docker hub ID')
+        string(name: 'IMAGE', defaultValue: 'petclinic', description: 'Image name')
+    }
+
+  stages {
+    stage('Build') {
+      agent {
+        docker {
+          reuseNode true
+          image 'maven:3.8.3-openjdk-17'
+        }
+      }
+      steps {
+        git branch: 'main', url: 'https://github.com/brainupgrade-in/spring-framework-petclinic.git'
+        sh 'mvn clean package -DskipTests'
+      }
+      post {
+        success {
+            sh 'echo build stage successful'
+        }
+      }
+    }
+
+    stage('Tests and code scan in parallel') {
+      parallel {
+        stage ('Test') {
+            agent {
+                docker {
+                reuseNode true    
+                image 'maven:3.8.3-openjdk-17'
+                }
+            }
+          steps {
+            sh 'mvn test'
+            junit 'target/surefire-reports/**/*.xml'
+          }
+        }
+        stage ('Integration Test') {
+          agent any 
+          steps {
+            echo 'Run integration tests here...'
+          }
+        }
+        stage('Code Scan') {
+          agent {
+            docker {
+              image 'busybox'
+              reuseNode true
+            }
+          }
+          environment {
+            SCAN_TOOL = 'tool_path'
+          }
+          steps {
+            sh "echo code scanning using the tool ${SCAN_TOOL}"
+          }
+        }
+      }
+    }
+
+    stage('Build and Publish Image') {
+      when {
+        branch 'master'  
+      }
+      steps {
+        sh """
+          docker build -t ${IMAGE} .
+          docker tag ${IMAGE} ${IMAGE_AUTHOR}/${IMAGE}:${env.BUILD_ID}
+          docker push ${IMAGE_AUTHOR}/${IMAGE}:${env.BUILD_ID}
+        """
+      }
+    }
+  }
+
+  post {
+    failure {
+      sh "echo build failed Failed Pipeline: ${currentBuild.fullDisplayName}"
+    }
+  }
+}
