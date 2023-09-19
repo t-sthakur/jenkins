@@ -19,8 +19,8 @@ pipeline {
     }
     stage('Docker compose up') {
       steps {
-        sh 'docker compose -f examples/02-docker/07-docker-compose/docker-compose.yaml run echo-server &'
-        sh 'docker compose ls'
+        sh 'docker compose -f examples/02-docker/07-docker-compose/docker-compose.yaml up &'
+        sh 'docker compose -f examples/02-docker/07-docker-compose/docker-compose.yaml ps'
       }
     }
     stage('Test the container app') {
