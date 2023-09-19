@@ -1,7 +1,6 @@
 pipeline {
   agent {
     kubernetes {
-      label 'jenkins-slave'
       defaultContainer 'jnlp'
       yaml """
 apiVersion: v1
@@ -27,7 +26,6 @@ spec:
     }
   }
   stages {
-
     stage('Build') {
       steps {
         git url: 'https://github.com/brainupgrade-in/gitops-apps-hello', branch: 'main'
@@ -38,6 +36,6 @@ spec:
           }
         }
       }
-    }  
+    }
   }
 }

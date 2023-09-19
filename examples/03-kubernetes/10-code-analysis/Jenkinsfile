@@ -76,28 +76,5 @@ spec:
                 dependencyCheckPublisher pattern: '**/dependency-check-report.html'
             }
         }
-        
-        //  stage("Build"){
-        //     steps{
-        //         sh " mvn clean install"
-        //     }
-        // }
-        
-        // stage("Docker Build & Push"){
-        //     steps{
-        //         script{
-        //            withDockerRegistry(credentialsId: 'docker-hub-credentials', toolName: 'docker') {
-                        
-        //                 sh "docker build -t brainupgrade/spring-framework-petclinic:${env.BUILD_ID} ."
-        //                 sh "docker push brainupgrade/spring-framework-petclinic:${env.BUILD_ID} "
-        //             }
-        //         }
-        //     }
-        // }        
-        // stage("TRIVY"){
-        //     steps{
-        //         sh " trivy image brainupgrade/spring-framework-petclinic:${env.BUILD_ID}"
-        //     }
-        // }
     }
 }
