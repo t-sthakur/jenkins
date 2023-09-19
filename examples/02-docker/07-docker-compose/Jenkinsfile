@@ -20,8 +20,7 @@ pipeline {
     stage('Docker compose up') {
       steps {
         sh 'docker compose -f examples/02-docker/07-docker-compose/docker-compose.yaml run echo-server &'
-        sh 'docker compose up -d --no-color --wait '
-        sh 'docker compose ps'
+        sh 'docker compose ls'
       }
     }
     stage('Test the container app') {
@@ -37,8 +36,8 @@ pipeline {
   }
   post {
     always {
-      sh 'docker compose down --remove-orphans -v'
-      sh 'docker compose ps'
+      sh 'docker compose  -f examples/02-docker/07-docker-compose/docker-compose.yaml kill'
+      sh 'docker compose ls'
     }
   }
 }

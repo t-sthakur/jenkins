@@ -3,13 +3,20 @@ pipeline {
       label 'docker'
     }
     stages {
-        stage('Build & Deliver') {
+        stage('Testing Database') {
             steps {
               script{
                     withDockerContainer(args: '-p 3306:3306', image: 'mysql:8-oracle') {
-                        /* do things */
-                        sh 'echo hello'
-                        sh 'ps aux'
+                        sh 'mysql -V'
+                    }
+              }
+            }
+        }
+        stage('Network tests') {
+            steps {
+              script{
+                    withDockerContainer(image: 'brainupgrade/tshoot') {
+                        sh 'nc -vz google.com:80'
                     }
               }
             }

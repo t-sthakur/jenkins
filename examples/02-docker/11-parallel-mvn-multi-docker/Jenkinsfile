@@ -72,8 +72,10 @@ pipeline {
     }
 
     stage('Build and Publish Image') {
-      when {
-        branch 'main'  
+      agent{
+        node {
+          label 'docker'
+        }
       }
       steps {
         sh """
