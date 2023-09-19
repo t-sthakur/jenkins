@@ -26,7 +26,6 @@ pipeline {
     stage('Test the container app') {
       steps {
           script{
-            docker.image('brainupgrade/tshoot').inside {
             withDockerContainer(args: '--network 07-docker-compose_default', image: 'brainupgrade/tshoot') {  
                           sh 'curl 07-docker-compose-echo-server-1:8080'
 
