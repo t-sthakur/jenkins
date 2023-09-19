@@ -29,6 +29,9 @@ spec:
     stage('Build') {
       steps {
         git url: 'https://github.com/brainupgrade-in/gitops-apps-hello', branch: 'main'
+        container('dind'){
+            sh "/bin/bash -c echo -n 'Waiting for port 2375 to open...' && until nc -z 0.0.0.0 2375; do sleep 1 && echo -n .; done && echo 'Port 2375 is now open!'"
+        }
         container('docker') {
           withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
             sh "docker login -u ${USERNAME} -p ${PASSWORD}"

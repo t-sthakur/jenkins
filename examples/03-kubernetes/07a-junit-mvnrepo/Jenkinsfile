@@ -1,8 +1,8 @@
-pipeline{
+pipeline {
     agent {
     kubernetes {
       defaultContainer 'jnlp'
-      yaml """
+      yaml '''
 apiVersion: v1
 kind: Pod
 spec:
@@ -19,41 +19,39 @@ spec:
     volumeMounts:
     - name: mvnrepo
       mountPath: "/root/.m2/repository"
-"""
+'''
     }
-  }
-    
+    }
+
   options {
     disableConcurrentBuilds()
   }
 
-  
-  stages{
-    stage('Clone'){
-      steps{
-        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/spring-guides/gs-testing-web.git']])
-        echo "clone demo"
+  stages {
+    stage('Clone') {
+      steps {
+        git branch: 'main', url: 'https://github.com/spring-guides/gs-testing-web.git'
+        echo 'clone demo'
       }
     }
 
-    stage('Build & Test'){
-      steps{
-        script{
-          container('maven'){
+    stage('Build & Test') {
+      steps {
+        script {
+          container('maven') {
             sh 'mvn test -DSERVER_PORT=1234 -f complete/pom.xml'
             junit 'complete/target/surefire-reports/**/*.xml'
           }
         }
       }
     }
-
   }
-  
-  post{
-    always{
-          container('maven'){
-        //    junit 'complete/target/surefire-reports/**/*.xml'
-          echo "inside post always"
+
+  post {
+    always {
+          container('maven') {
+          //    junit 'complete/target/surefire-reports/**/*.xml'
+          echo 'inside post always'
           }
     }
   }
