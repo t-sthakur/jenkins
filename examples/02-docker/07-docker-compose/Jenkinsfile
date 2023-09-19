@@ -27,7 +27,8 @@ pipeline {
       steps {
           script{
             docker.image('brainupgrade/tshoot').inside {
-                          sh 'curl http://echo-server:8080'
+            withDockerContainer(args: '--network 07-docker-compose_default', image: 'brainupgrade/tshoot') {  
+                          sh 'curl 07-docker-compose-echo-server-1:8080'
 
             }
         }
@@ -36,6 +37,7 @@ pipeline {
   }
   post {
     always {
+      sh 'docker compose  -f examples/02-docker/07-docker-compose/docker-compose.yaml down'
       sh 'docker compose  -f examples/02-docker/07-docker-compose/docker-compose.yaml kill'
       sh 'docker compose ls'
     }
