@@ -73,14 +73,16 @@ pipeline {
 
     stage('Build and Publish Image') {
       when {
-        branch 'master'  
+        branch 'main'  
       }
       steps {
         sh """
           docker build -t ${IMAGE} .
           docker tag ${IMAGE} ${IMAGE_AUTHOR}/${IMAGE}:${env.BUILD_ID}
-          docker push ${IMAGE_AUTHOR}/${IMAGE}:${env.BUILD_ID}
         """
+        withDockerRegistry(credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/') {
+            sh "docker push ${IMAGE_AUTHOR}/${IMAGE}:${env.BUILD_ID}"
+        }
       }
     }
   }
