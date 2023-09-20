@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    label 'docker'
+    label 'multi-platform'
   }
   stages {
     stage("Verify") {
